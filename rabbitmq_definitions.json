@@ -1,0 +1,27 @@
+{
+  "users": [
+    {
+      "name": "guest",
+      "password_hash": "LLiaPFySZk0kKekxDmrq7T6JwsPs/+u97rF2M3yuKFvxaB5c",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": [
+        "administrator"
+      ],
+      "limits": {}
+    }
+  ],
+  "vhosts": [
+    {
+      "name": "/"
+    }
+  ],
+  "queues": [
+    {
+      "name": "events",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    }
+  ]
+}
