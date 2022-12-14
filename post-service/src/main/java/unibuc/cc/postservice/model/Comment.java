@@ -1,0 +1,43 @@
+package unibuc.cc.postservice.model;
+
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.Hibernate;
+
+import java.util.Objects;
+
+@Entity
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
+public class Comment {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "comment_id")
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name="article_id", nullable=false)
+    private BlogPost blogPost;
+
+    @Column
+    private String tag;
+
+    @ManyToOne
+    @JoinColumn(name="user_id", nullable=false)
+    private UserAccount userAccount;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Comment comment = (Comment) o;
+        return id != null && Objects.equals(id, comment.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+}
