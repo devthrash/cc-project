@@ -17,8 +17,9 @@ public class RabbitMQSender {
         this.queue = queue;
     }
 
-    public void send(BlogPost blogPost) {
-        rabbitTemplate.convertAndSend(queue.getName(), blogPost);
-        log.info("Sending Message to the Queue : " + blogPost.toString());
+    public void send(Object object) {
+        rabbitTemplate.convertAndSend(queue.getName(), object);
+        log.info("Sending Message to the Queue : " + object.toString());
     }
+
 }

@@ -22,6 +22,15 @@ public class UserAccount {
     @ToString.Exclude
     private List<Comment> comments;
 
+    @Column
+    private String firstName;
+
+    @Column
+    private String lastName;
+
+    @Column
+    private String email;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

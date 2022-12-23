@@ -18,6 +18,16 @@ public class BlogPost {
     @Column(name = "blog_id")
     private Long blogId;
 
+    @Column
+    private String tag;
+
+    @Column
+    private String title;
+
+    @Column
+    private Integer likes;
+
+    @Column
     private String description;
 
     @OneToMany(mappedBy= "blogPost")
