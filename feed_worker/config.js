@@ -14,14 +14,7 @@ const config = {
             prefetch: 1
         }
     },
-    mongo: {
-        username: process.env.MONGO_USER,
-        password: process.env.MONGO_PASS,
-        host: process.env.MONGO_HOST,
-        port: process.env.MONGO_PORT,
-        dbName: process.env.MONGO_DB,
-        collectionName: 'posts'
-    }
+    metadataServiceHost: process.env.METADATA_SERVICE_HOST
 }
 
 module.exports = config

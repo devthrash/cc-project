@@ -1,9 +1,10 @@
 'use strict';
 
-(async () => {
-    // init mongodb connection
-    const { collection } = require('./lib/mongoUtils').init()
+const axios = require('axios')
 
+axios.defaults.baseURL = require('./config').metadataServiceHost;
+
+(async () => {
     // init amqp connection
     const amqp = await require('./lib/amqp').init();
 
@@ -13,19 +14,13 @@
             data
         } = content
 
-        const query = {
-            uuid: data.uuid
-        }
-
         try {
             if (['post-created', 'post-updated'].includes(event)) {
-                await collection.updateOne(query, { $set: data }, {
-                    upsert: true
-                })
+                await axios.post('api/v1/metadata', data)
             }
 
             if (event === 'post-deleted') {
-                await collection.deleteOne(query)
+                await axios.delete(`api/v1/metadata/${data.uuid}`)
             }
         } catch (e) {
             reject(true)
