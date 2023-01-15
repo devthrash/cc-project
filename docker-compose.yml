@@ -4,9 +4,9 @@ services:
   pgsql:
     image: postgres:14.6
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: test_db_user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: test_db
     volumes:
       - pgsql_data:/var/lib/postgresql/data
     ports:
@@ -38,9 +38,25 @@ services:
       - "5672:5672"
       - "15672:15672"
 
+  post-service:
+    build: .
+    depends_on:
+      - pgsql
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://pgsql:5432/test_db
+      - SPRING_DATASOURCE_USERNAME=test_db_user
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
+    ports:
+      - "8080:8080"
+    volumes:
+      - app_data:/var/lib/app_data/data
+
 volumes:
   pgsql_data:
 
   mongo_data:
 
   rabbitmq_data:
+
+  app_data:
