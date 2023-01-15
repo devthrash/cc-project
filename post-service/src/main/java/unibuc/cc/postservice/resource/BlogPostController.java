@@ -7,6 +7,8 @@ import unibuc.cc.postservice.model.BlogPost;
 import unibuc.cc.postservice.repository.BlogPostRepository;
 import unibuc.cc.postservice.service.RabbitMQSender;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("blogs")
 @Transactional
@@ -25,8 +27,12 @@ public class BlogPostController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public BlogPost create(@RequestBody BlogPost request) {
-        rabbitMQSender.send(request);
-        return blogPostRepository.save(request);
+        BlogPost post = blogPostRepository.save(request);
+
+        Map<String, Object> map = Map.of("event", "post-created", "data", post);
+        rabbitMQSender.send(map);
+
+        return post;
     }
 
     @PutMapping("/{id}")
@@ -45,6 +51,12 @@ public class BlogPostController {
                 .orElseThrow(() -> new RuntimeException("Blog Post with id: " + id + " does not exist"));
         rabbitMQSender.send(blogPost);
         blogPostRepository.delete(blogPost);
+    }
+
+    @GetMapping("/{id}")
+    public BlogPost getBlogPost(@PathVariable long id) {
+        return blogPostRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Blog Post with id: " + id + " does not exist"));
     }
 
 }

@@ -11,6 +11,8 @@ services:
       - pgsql_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    networks:
+      - net
 
   mongo:
     image: mongo:5.0
@@ -26,20 +28,75 @@ services:
     command: mongod --bind_ip_all
     ports:
       - "27017:27017"
+    networks:
+      - net
 
   rabbitmq:
     image: rabbitmq:3.9.26-management
     volumes:
       - ./rabbitmq_definitions.json:/etc/rabbitmq/definitions.json:ro
       - rabbitmq_data:/var/lib/rabbitmq
-    environment:
-      RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: -rabbitmq_management load_definitions "/etc/rabbitmq/definitions.json"
+#    environment:
+#      RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: -rabbitmq_management load_definitions "/etc/rabbitmq/definitions.json"
     ports:
       - "5672:5672"
       - "15672:15672"
+    networks:
+      - net
+
+  event_worker:
+    build:
+      context: event_worker
+    environment:
+      AMQP_USER: guest
+      AMQP_PASS: guest
+      AMQP_HOST: rabbitmq
+      AMQP_PORT: 5672
+      AMPQ_QUEUE: events
+      METADATA_SERVICE_HOST: http://metadata_service:9000
+    networks:
+      - net
+    restart: unless-stopped
+
+  metadata_service:
+    build:
+      context: ./metadata_service
+    environment:
+      MONGO_URL: mongodb://${MONGO_INITDB_USERNAME}:${MONGO_INITDB_PASSWORD}@mongo:27017/${MONGO_INITDB_DATABASE}
+    networks:
+      - net
+
+  api:
+    build:
+      context: ./composition_api
+    environment:
+      METADATA_SERVICE_HOST: http://metadata_service:9000
+      BLOGS_API_HOST: http://host.docker.internal:8080
+    ports:
+      - "9000:9000"
+    networks:
+      - net
+
+  api_proxy:
+    image: nginx:1.23.2
+    volumes:
+      - ./nginx.conf:/etc/nginx/templates/default.conf.template:ro
+    environment:
+      API_HOST: api:9000
+    ports:
+      - "9999:80"
+    networks:
+      - net
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "80:80"
+
 
   post-service:
-    build: .
+    build: ./post-service
     depends_on:
       - pgsql
     environment:
@@ -51,6 +108,8 @@ services:
       - "8080:8080"
     volumes:
       - app_data:/var/lib/app_data/data
+    networks:
+      - net
 
 volumes:
   pgsql_data:
@@ -60,3 +119,7 @@ volumes:
   rabbitmq_data:
 
   app_data:
+
+networks:
+  net:
+    driver: bridge
