@@ -1,15 +1,15 @@
 <template>
-  <div class="box">
-    <h1 class="title">{{ blog.title }}</h1>
 
-    <p>
-      {{ blog.description }}
-    </p>
+  <h1 class="title">{{ blog.title }}</h1>
 
-    <p>
-      <span class="tag" v-show="blog.tag">{{ blog.tag}}</span>
-    </p>
-  </div>
+  <p>
+    {{ blog.description }}
+  </p>
+
+  <p>
+    <span class="tag" v-show="blog.tag">{{ blog.tag}}</span>
+  </p>
+
 </template>
 
 <script>

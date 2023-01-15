@@ -96,7 +96,7 @@ services:
 
 
   post-service:
-    build: .
+    build: ./post-service
     depends_on:
       - pgsql
     environment:
@@ -108,6 +108,8 @@ services:
       - "8080:8080"
     volumes:
       - app_data:/var/lib/app_data/data
+    networks:
+      - net
 
 volumes:
   pgsql_data:

@@ -5,6 +5,8 @@ import CreateBlogPost from "../views/CreateBlogPost.vue";
 import ViewBlogPost from "../views/ViewBlogPost.vue";
 
 const router = createRouter({
+  linkActiveClass: 'is-active',
+  linkExactActiveClass: 'is-active',
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {

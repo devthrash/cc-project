@@ -5,7 +5,14 @@ import { RouterLink, RouterView } from 'vue-router'
 
 <template>
   <div class="container">
-    <RouterView />
+    <div class="box">
+      <div class="buttons is-grouped">
+          <router-link class="button" to="/">Home</router-link>
+          <router-link class="button" to="/create">New blog post</router-link>
+      </div>
+
+      <RouterView />
+    </div>
   </div>
 </template>
 
