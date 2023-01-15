@@ -7,6 +7,12 @@
 async function routes (fastify, options) {
     const collection = fastify.mongo.db.collection('posts')
 
+    collection.createIndex({
+        title: 'text',
+        description: 'text',
+        tag: 'text'
+    })
+
     fastify.post(
         '/api/v1/metadata',
         {
@@ -14,10 +20,10 @@ async function routes (fastify, options) {
                 body: {
                     type: 'object',
                     properties: {
-                        uuid: { type: 'string' },
+                        blogId: { type: 'number' },
                         title: { type: 'string' },
                     },
-                    required: ['uuid']
+                    required: ['blogId']
                 }
             }
         },
@@ -25,7 +31,7 @@ async function routes (fastify, options) {
             const { body } = request;
 
             const query = {
-                uuid: body.uuid
+                blogId: body.blogId
             }
 
             await collection.updateOne(query, { $set: body }, { upsert: true })
@@ -45,10 +51,10 @@ async function routes (fastify, options) {
                 body: {
                     type: 'object',
                     properties: {
-                        uuid: { type: 'string' },
+                        blogId: { type: 'number' },
                         views: { const: 1 }
                     },
-                    required: ['uuid']
+                    required: ['blogId']
                 }
             }
         },
@@ -56,7 +62,7 @@ async function routes (fastify, options) {
             const { body } = request;
 
             const query = {
-                uuid: body.uuid
+                blogId: body.blogId
             }
 
             const update = {}
@@ -78,11 +84,11 @@ async function routes (fastify, options) {
     )
 
     fastify.get(
-        '/api/v1/metadata/:uuid',
+        '/api/v1/metadata/:blogId',
         async (request, reply) => {
             const { params } = request;
 
-            const metadata = await collection.findOne({ uuid: params.uuid })
+            const metadata = await collection.findOne({ blogId: params.blogId })
 
             if (metadata) {
                 return {
@@ -103,11 +109,11 @@ async function routes (fastify, options) {
     )
 
     fastify.delete(
-        '/api/v1/metadata/:uuid',
+        '/api/v1/metadata/:blogId',
         async (request, reply) => {
             const { params } = request;
 
-            await collection.deleteOne({ uuid: params.uuid })
+            await collection.deleteOne({ blogId: params.blogId })
 
             return {
                 result: {

@@ -1,6 +1,6 @@
 'use strict';
 
-const { metadataApi } = require('./http')
+const { metadataApi, blogsApi } = require('./http')
 
 /**
  * @param {import('fastify').FastifyInstance} fastify
@@ -28,6 +28,45 @@ async function routes (fastify, options) {
 
             return {
                 posts: response.data.result.posts
+            }
+        }
+    )
+
+    fastify.get(
+        '/api/v1/posts/:id',
+        async (request, reply) => {
+            const { params } = request;
+
+            const response = await blogsApi.get('blogs/' + params.id)
+
+            return {
+                post: response.data
+            }
+        }
+    )
+
+    fastify.post(
+        '/api/v1/posts',
+        {
+            schema: {
+                body: {
+                    type: 'object',
+                    properties: {
+                        tag: { type: 'string' },
+                        title: { type: 'string', minLength: 3 },
+                        description: { type: 'string', minLength: 10 },
+                    },
+                    required: ['title', 'description']
+                }
+            }
+        },
+        async (request, reply) => {
+            const { body } = request;
+
+            const response = await blogsApi.post('blogs', body)
+
+            return {
+                post: response.data
             }
         }
     )

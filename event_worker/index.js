@@ -20,7 +20,7 @@ axios.defaults.baseURL = require('./config').metadataServiceHost;
             }
 
             if (event === 'post-deleted') {
-                await axios.delete(`api/v1/metadata/${data.uuid}`)
+                await axios.delete(`api/v1/metadata/${data.blogId}`)
             }
         } catch (e) {
             reject(true)
