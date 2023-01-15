@@ -1,7 +1,7 @@
 package unibuc.cc.postservice.resource;
 
-import jakarta.transaction.Transactional;
 import org.springframework.http.MediaType;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import unibuc.cc.postservice.model.Comment;
 import unibuc.cc.postservice.repository.CommentRepository;
