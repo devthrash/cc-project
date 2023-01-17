@@ -1,20 +1,23 @@
 FROM node:slim as builder
 
+ARG BACKEND_HOST_ARG
+
 # create working directory
 RUN mkdir /build
 WORKDIR /build
 
 # install build depedencies
-COPY package*.json ./
-RUN npm ci
+COPY package.json .
+COPY package-lock.json .
+RUN npm install
 
 # copy source code and other files
-#COPY src .src/
-#COPY public .public/
 COPY . .
 
-# set env; webpack and other modules have configs for production
 ENV NODE_ENV production
+
+# set backend host
+ENV BACKEND_HOST ${BACKEND_HOST_ARG}
 
 # build the app
 RUN npm run build

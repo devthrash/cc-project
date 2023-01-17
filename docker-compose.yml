@@ -91,6 +91,8 @@ services:
   frontend:
     build:
       context: ./frontend
+      args:
+        BACKEND_HOST_ARG: http://localhost:9999
     ports:
       - "80:80"
 

@@ -1,5 +1,6 @@
 import axios from 'axios';
 
 export default axios.create({
-    baseURL: 'http://localhost:9999'
+    baseURL: import.meta.env.VITE_BACKEND_HOST
+    // baseURL: 'http://localhost:9999'
 });
