@@ -96,9 +96,11 @@ services:
 
 
   post-service:
-    build: ./post-service
     depends_on:
       - pgsql
+    build:
+      context: ./post-service
+      dockerfile: Dockerfile
     image: post-service:latest
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://pgsql:5432/test_db
@@ -107,11 +109,11 @@ services:
       - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
     ports:
       - "8080:8080"
-      - "8081:8081"
     volumes:
       - app_data:/var/lib/app_data/data
     networks:
       - net
+    restart: unless-stopped
 
 volumes:
   pgsql_data:
