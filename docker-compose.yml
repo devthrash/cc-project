@@ -71,7 +71,7 @@ services:
       context: ./composition_api
     environment:
       METADATA_SERVICE_HOST: http://metadata_service:9000
-      BLOGS_API_HOST: http://host.docker.internal:8080
+      BLOGS_API_HOST: http://post-service:8080
     ports:
       - "9000:9000"
     networks:

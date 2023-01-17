@@ -1,12 +1,15 @@
 <template>
   <div class="field">
     <div class="control">
-      <input class="input" type="text" placeholder="Search..." v-on:input="debouncedHandler">
+      <input class="input" type="text" placeholder="Search..." v-on:input="debouncedHandler" v-model="search">
     </div>
   </div>
   <div>
     <div class="box" v-for="result in results">
       <a @click="onClickResult(result.blogId)">{{ result.title }}</a>
+    </div>
+    <div class="box" v-show="search.length && !results.length">
+      No results found
     </div>
   </div>
 </template>
@@ -20,7 +23,9 @@ export default {
 
   data() {
     return {
-      results: []
+      results: [],
+      search: '',
+      searchLoading: false
     }
   },
 
