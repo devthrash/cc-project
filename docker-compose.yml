@@ -99,6 +99,7 @@ services:
     build: ./post-service
     depends_on:
       - pgsql
+    image: post-service:latest
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://pgsql:5432/test_db
       - SPRING_DATASOURCE_USERNAME=test_db_user
@@ -106,6 +107,7 @@ services:
       - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
     ports:
       - "8080:8080"
+      - "8081:8081"
     volumes:
       - app_data:/var/lib/app_data/data
     networks:

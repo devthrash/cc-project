@@ -31,6 +31,12 @@ public class UserAccount {
     @Column
     private String email;
 
+    public UserAccount(String firstName, String lastName, String email) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

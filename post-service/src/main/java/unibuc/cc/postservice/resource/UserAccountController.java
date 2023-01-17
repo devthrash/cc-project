@@ -7,6 +7,8 @@ import unibuc.cc.postservice.model.UserAccount;
 import unibuc.cc.postservice.repository.UserAccountRepository;
 import unibuc.cc.postservice.service.RabbitMQSender;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("users")
 @Transactional
@@ -31,12 +33,13 @@ public class UserAccountController {
 
     @PutMapping("/{id}")
     public UserAccount update(@PathVariable long id, @RequestBody UserAccount request) {
-        rabbitMQSender.send(request);
         UserAccount userAccount = userAccountRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User with id: " + id + " does not exist"));
         userAccount.setLastName(request.getLastName());
-        userAccountRepository.save(userAccount);
-        return userAccount;
+        UserAccount savedUser = userAccountRepository.save(userAccount);
+        Map<String, Object> map = Map.of("event", "user-created", "data", savedUser);
+        rabbitMQSender.send(map);
+        return savedUser;
     }
 
     @DeleteMapping(value = "/{id}")

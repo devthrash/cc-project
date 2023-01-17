@@ -1,5 +1,6 @@
 package unibuc.cc.postservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.Hibernate;
 
@@ -10,7 +11,9 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -24,14 +27,14 @@ public class Comment {
     private String text;
 
     @ManyToOne
-    @JoinColumn(name="article_id", nullable=false)
+    @JoinColumn(name="blog_id")
     private BlogPost blogPost;
 
     @Column
     private String tag;
 
     @ManyToOne
-    @JoinColumn(name="user_id", nullable=false)
+    @JoinColumn(name="user_id")
     private UserAccount userAccount;
 
     @Override
