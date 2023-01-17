@@ -53,8 +53,7 @@ public class CommentController {
                 .text(request.getText())
                 .build();
         Comment savedEntity = commentRepository.save(comment);
-        Map<String, Object> map = Map.of("event", "comment-created", "data", "{blogPostId:" + savedEntity.getBlogPost().getBlogId() +
-                '}');
+        Map<String, Object> map = Map.of("event", "comment-created", "data", Map.of("blogId", savedEntity.getBlogPost().getBlogId()));
         rabbitMQSender.send(map);
         return new CommentDTO(savedEntity);
     }

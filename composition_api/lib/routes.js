@@ -33,6 +33,17 @@ async function routes (fastify, options) {
     )
 
     fastify.get(
+        '/api/v1/posts/feed',
+        async (request, reply) => {
+            const response = await metadataApi.get('api/v1/metadata/all')
+
+            return {
+                posts: response.data.result.posts
+            }
+        }
+    )
+
+    fastify.get(
         '/api/v1/posts/:id',
         async (request, reply) => {
             const { params } = request;
@@ -54,7 +65,7 @@ async function routes (fastify, options) {
                     properties: {
                         tag: { type: 'string' },
                         title: { type: 'string', minLength: 3 },
-                        description: { type: 'string', minLength: 10 },
+                        description: { type: 'string', minLength: 3 },
                     },
                     required: ['title', 'description']
                 }
@@ -64,6 +75,34 @@ async function routes (fastify, options) {
             const { body } = request;
 
             const response = await blogsApi.post('blogs', body)
+
+            return {
+                post: response.data
+            }
+        }
+    )
+
+    fastify.post(
+        '/api/v1/posts/:id/comments',
+        {
+            schema: {
+                body: {
+                    type: 'object',
+                    properties: {
+                        text: { type: 'string', minLength: 3 }
+                    },
+                    required: ['text']
+                }
+            }
+        },
+        async (request, reply) => {
+            const { params, body } = request;
+
+            const response = await blogsApi.post('comments', {
+                ...body,
+                blogPostId: params.id,
+                userAccountId: 1 // HARDCODED
+            })
 
             return {
                 post: response.data

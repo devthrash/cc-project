@@ -1,5 +1,6 @@
 package unibuc.cc.postservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.Hibernate;
 
@@ -20,6 +21,7 @@ public class UserAccount {
 
     @OneToMany(mappedBy = "userAccount")
     @ToString.Exclude
+    @JsonIgnore
     private List<Comment> comments;
 
     @Column

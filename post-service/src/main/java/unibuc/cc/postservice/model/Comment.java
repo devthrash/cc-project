@@ -1,6 +1,7 @@
 package unibuc.cc.postservice.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import org.hibernate.Hibernate;
 
@@ -28,6 +29,7 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name="blog_id")
+    @JsonIgnore
     private BlogPost blogPost;
 
     @Column

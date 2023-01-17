@@ -10,7 +10,10 @@ async function routes (fastify, options) {
     collection.createIndex({
         title: 'text',
         description: 'text',
-        tag: 'text'
+        tags: 'text'
+    })
+    collection.createIndex({
+        created_at: 1
     })
 
     fastify.post(
@@ -34,7 +37,18 @@ async function routes (fastify, options) {
                 blogId: body.blogId
             }
 
-            await collection.updateOne(query, { $set: body }, { upsert: true })
+            const now = new Date()
+            const doc = {
+                $set: {
+                    ...body,
+                    updated_at: now
+                },
+                $setOnInsert: {
+                    created_at: now
+                }
+            }
+
+            await collection.updateOne(query, doc, { upsert: true })
 
             return {
                 result: {
@@ -52,9 +66,9 @@ async function routes (fastify, options) {
                     type: 'object',
                     properties: {
                         blogId: { type: 'number' },
-                        views: { const: 1 }
+                        op: { enum: ['inc_comment_count'] }
                     },
-                    required: ['blogId']
+                    required: ['blogId', 'op']
                 }
             }
         },
@@ -67,13 +81,13 @@ async function routes (fastify, options) {
 
             const update = {}
 
-            if (body.views) {
-                update['$inc'] = { views: body.views }
+            if (body.op === 'inc_comment_count') {
+                update['$inc'] = { comment_count: 1 }
             }
 
-            if (Object.keys(update).length) {
+            // if (Object.keys(update).length) {
                 await collection.updateOne(query, update)
-            }
+            // }
 
             return {
                 result: {
@@ -146,6 +160,20 @@ async function routes (fastify, options) {
             return {
                 result: {
                     posts: await collection.find(query).limit(20).toArray(),
+                    ok: true
+                }
+            }
+        }
+    )
+
+    fastify.get(
+        '/api/v1/metadata/all',
+        async (request, reply) => {
+            const { body } = request;
+
+            return {
+                result: {
+                    posts: await collection.find({}).sort({created_at: -1}).toArray(),
                     ok: true
                 }
             }

@@ -15,12 +15,32 @@ axios.defaults.baseURL = require('./config').metadataServiceHost;
         } = content
 
         try {
-            if (['post-created', 'post-updated'].includes(event)) {
-                await axios.post('api/v1/metadata', data)
+            if (['post-created', /*'post-updated'*/].includes(event)) {
+                const doc = {
+                    blogId: data.blogId,
+                    title: data.title,
+                    description: data.description,
+                    tags: []
+                }
+
+                if (data.tag) {
+                    doc.tags.push(data.tag)
+                }
+
+                await axios.post('api/v1/metadata', doc)
             }
 
             if (event === 'post-deleted') {
                 await axios.delete(`api/v1/metadata/${data.blogId}`)
+            }
+
+            if (event === 'comment-created') {
+                const { blogId } = data
+
+                await axios.patch('api/v1/metadata', {
+                    blogId,
+                    op: 'inc_comment_count'
+                })
             }
         } catch (e) {
             reject(true)
